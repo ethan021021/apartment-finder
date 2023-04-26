@@ -1,5 +1,6 @@
 import settings
 import math
+import os
 
 from twilio.rest import Client
 
@@ -41,8 +42,8 @@ def post_listing_to_slack(listings):
     for listing in listings:
         message += "{0} | {1} | {2} | <{3}>\n".format(listing["where"], listing["price"], listing["name"], listing["url"])
 
-    account_sid = "AC1d2bae948ebc1e2b275beed12726c78f"
-    account_token = "48f3cd4d3941ec269b29b77dd1b5e609"
+    account_sid = os.environ["ACCOUNT_SID"]
+    account_token = os.environ["ACCOUNT_TOKEN"]
     client = Client(account_sid, account_token)
 
     twilio_message = client.messages.create(body=message, from_='+17246539043', to='+14158583979')
