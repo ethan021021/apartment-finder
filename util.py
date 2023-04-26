@@ -1,6 +1,8 @@
 import settings
 import math
 
+from twilio.rest import Client
+
 def coord_distance(lat1, lon1, lat2, lon2):
     """
     Finds the distance between two pairs of latitude and longitude.
@@ -29,17 +31,28 @@ def in_box(coords, box):
         return True
     return False
 
-def post_listing_to_slack(sc, listing):
+def post_listing_to_slack(listings):
     """
     Posts the listing to slack.
     :param sc: A slack client.
     :param listing: A record of the listing.
     """
-    desc = "{0} | {1} | {2} | {3} | <{4}>".format(listing["area"], listing["price"], listing["bart_dist"], listing["name"], listing["url"])
-    sc.api_call(
-        "chat.postMessage", channel=settings.SLACK_CHANNEL, text=desc,
-        username='pybot', icon_emoji=':robot_face:'
-    )
+    message = ""
+    for listing in listings:
+        message += "{0} | {1} | {2} | <{3}>\n".format(listing["where"], listing["price"], listing["name"], listing["url"])
+
+    account_sid = "AC1d2bae948ebc1e2b275beed12726c78f"
+    account_token = "48f3cd4d3941ec269b29b77dd1b5e609"
+    client = Client(account_sid, account_token)
+
+    twilio_message = client.messages.create(body=message, from_='+17246539043', to='+14158583979')
+
+    print(twilio_message.sid)
+
+    # sc.api_call(
+    #     "chat.postMessage", channel=settings.SLACK_CHANNEL, text=desc,
+    #     username='pybot', icon_emoji=':robot_face:'
+    # )
 
 def find_points_of_interest(geotag, location):
     """

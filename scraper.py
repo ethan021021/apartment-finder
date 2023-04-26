@@ -4,6 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, DateTime, Float, Boolean
 from sqlalchemy.orm import sessionmaker
 from dateutil.parser import parse
+from datetime import date
 from util import post_listing_to_slack, find_points_of_interest
 # from slackclient import SlackClient
 import time
@@ -48,11 +49,12 @@ def scrape_area(area):
                              filters={'max_price': settings.MAX_PRICE, "min_price": settings.MIN_PRICE})
 
     results = []
-    gen = cl_h.get_results(sort_by='newest', geotagged=True, limit=20)
+    gen = cl_h.get_results(sort_by='newest', geotagged=True, limit=8)
     while True:
         try:
             result = next(gen)
-            print(result)
+            results.append(result)
+            # print(result)
         except StopIteration:
             break
         except Exception:
@@ -89,7 +91,7 @@ def scrape_area(area):
         #     # Create the listing object.
         #     listing = Listing(
         #         link=result["url"],
-        #         created=parse(result["datetime"]),
+        #         created=date.today(),
         #         lat=lat,
         #         lon=lon,
         #         name=result["name"],
@@ -123,8 +125,7 @@ def do_scrape():
     for area in settings.AREAS:
         all_results += scrape_area(area)
 
-    # print("{}: Got {} results".format(time.ctime(), len(all_results)))
+    print("{}: Got {} results".format(time.ctime(), len(all_results)))
 
     # Post each result to slack.
-    # for result in all_results:
-    #     post_listing_to_slack(sc, result)
+    post_listing_to_slack(all_results)
