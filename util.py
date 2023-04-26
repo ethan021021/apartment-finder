@@ -46,7 +46,7 @@ def post_listing_to_slack(listings):
     account_token = os.environ["ACCOUNT_TOKEN"]
     client = Client(account_sid, account_token)
 
-    twilio_message = client.messages.create(body=message, from_='+17246539043', to='+14158583979')
+    twilio_message = client.messages.create(body=message, from_='+17246539043', to='+16153368178')
 
     print(twilio_message.sid)
 
