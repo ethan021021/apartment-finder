@@ -40,7 +40,7 @@ def post_listing_to_slack(listings):
     """
     message = ""
     for listing in listings:
-        message += "{0} | {1} | {2} | <{3}>\n".format(listing["where"], listing["price"], listing["name"], listing["url"])
+        message += "{0} | {1} | {2} | <{3}>\n".format(listing["datetime"], listing["price"], listing["name"], listing["url"])
 
     account_sid = os.environ["ACCOUNT_SID"]
     account_token = os.environ["ACCOUNT_TOKEN"]
